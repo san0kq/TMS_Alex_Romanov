@@ -48,3 +48,5 @@ var_4 = bool(var_4)
 var_5 = bool(var_5)
 
 print(f'ID: {id(var_4)}, {id(var_5)}. Variables have same id: {var_4 is var_5}')
+
+# TODO Think about other methods to convert variables types in the same id
