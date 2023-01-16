@@ -6,5 +6,5 @@ if number_1 > 10 and number_2 > 10:
     print('Оба числа больше 10')
 elif number_1 > 10 or number_2 > 10:
     print('Одно из чисел больше 10')
-elif not number_1 == bool(0):  # if number_1 not False
+elif not bool(number_1):  # if number_1 not False
     print('Условие с помощью преобразования типов')
