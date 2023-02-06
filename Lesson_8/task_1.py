@@ -7,9 +7,9 @@
 
 string = b'r\xc3\xa9sum\xc3\xa9'
 print(string)
-string = string.decode('utf-8')  # Convert bytes to string
+string = string.decode('utf-8')
 print(string)
-string = string.encode('Latin1')  # Convert string to Latin1 bytes
+string = string.encode('Latin1')
 print(string)
-string = string.decode('Latin1')  # Convert Latin1 bytes to string
+string = string.decode('Latin1')
 print(string)
