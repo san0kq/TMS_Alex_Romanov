@@ -1,6 +1,7 @@
 while True:
     name = input('Введите ваше имя: ')
-    age = input('Введите ваш возраст (введите STOP, чтобы остановить программу): ')
+    age = input('Введите ваш возраст '
+                '(введите STOP, чтобы остановить программу): ')
 
     if age == 'STOP':  # Stopping code execution
         break
