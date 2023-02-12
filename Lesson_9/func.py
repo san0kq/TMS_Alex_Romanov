@@ -1,9 +1,11 @@
 import csv
 from operator import itemgetter
 from statistics import mean
+from functools import wraps
 
 
 def cache_decorator(func):
+    @wraps(func)
     def wrapper(*args):
         """
         The first two blocks of conditions are for the last two functions,
