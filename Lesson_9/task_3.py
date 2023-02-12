@@ -7,5 +7,7 @@
 letter = input('Введите букву: ').lower()
 
 with open('lorem_ipsum.txt') as text:
-    result = text.read().lower().count(letter)
+    result = 0
+    for line in text:
+        result += line.lower().count(letter)
     print(f'Результат: буква "{letter}" встречается {result} раз в тексте')
