@@ -4,6 +4,17 @@ from statistics import mean
 from functools import wraps
 
 
+class OpenFileAsTuple(object):
+    def __init__(self, file_name, method):
+        self.file = open(file_name, method)
+
+    def __enter__(self):
+        return tuple(csv.DictReader(self.file))
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.file.close()
+
+
 def cache_decorator(func):
     @wraps(func)
     def wrapper(*args):
