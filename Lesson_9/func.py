@@ -4,12 +4,12 @@ from statistics import mean
 from functools import wraps
 
 
-class OpenFileAsTuple(object):
+class OpenFileAsDict(object):
     def __init__(self, file_name, method):
         self.file = open(file_name, method)
 
     def __enter__(self):
-        return tuple(csv.DictReader(self.file))
+        return csv.DictReader(self.file)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.file.close()
@@ -18,72 +18,75 @@ class OpenFileAsTuple(object):
 def cache_decorator(func):
     @wraps(func)
     def wrapper(*args):
-        """
-        The first two blocks of conditions are for the last two functions,
-        which take only one argument and return only one constant value. After
-        "else", there is a block of conditions for the remaining functions with
-        two arguments.
-        """
-        if len(args) == 1 and 'Key' not in wrapper.cache:
-            wrapper.cache['Key'] = func(*args)
-        elif len(args) == 1:
-            return wrapper.cache['Key']
-        else:
-            cache_key = args[0]
-            if cache_key not in wrapper.cache:
-                wrapper.cache[cache_key] = func(*args)
-            return wrapper.cache[cache_key]
-        return wrapper.cache['Key']
+        cache_key = args
+        if cache_key not in wrapper.cache:
+            wrapper.cache[cache_key] = func(*args)
+
+        return wrapper.cache[cache_key]
     wrapper.cache = dict()
     return wrapper
 
 
 @cache_decorator
-def find_info_by_name(company_name: str, reader: csv.DictReader) -> list | str:
-    result = []
-    if company_name == '':
-        return "You cannot enter an empty string. Please enter something."
-    for row in reader:
-        if company_name.lower() in row['Name'].lower():
-            result.append(row)
+def find_info_by_name(company_name: str) -> list | str:
+    with OpenFileAsDict('sp500.csv', 'r') as data:
+        result = []
+        if company_name == '':
+            return "You cannot enter an empty string. Please enter something."
+        for row in data:
+            if company_name.lower() in row.get('Name').lower():
+                result.append({
+                    'Name': row.get('Name'),
+                    'Symbol': row.get('Symbol'),
+                    'Sector': row.get('Sector'),
+                    'Stock price': row.get('Price'),
+                }
+                )
 
-    return result
-
-
-@cache_decorator
-def find_info_by_symbol(company_symbol: str, reader: csv.DictReader) -> list:
-    result = []
-    for row in reader:
-        if company_symbol.lower() == row['Symbol'].lower():
-            result.append(row)
-
-    return result
+        return result
 
 
 @cache_decorator
-def get_all_companies_by_sector(sector: str, reader: csv.DictReader) -> list:
-    result = []
-    for row in reader:
-        if sector.lower() == row['Sector'].lower():
-            result.append(row['Name'])
-
-    return result
-
-
-@cache_decorator
-def calculate_average_price(reader: csv.DictReader) -> float:
-    result = []
-    for row in reader:
-        result.append(float(row['Price']))
-
-    return round(mean(result), 2)
+def find_info_by_symbol(company_symbol: str) -> list:
+    with OpenFileAsDict('sp500.csv', 'r') as data:
+        result = []
+        for row in data:
+            if company_symbol.lower() == row.get('Symbol').lower():
+                result.append({
+                    'Name': row.get('Name'),
+                    'Symbol': row.get('Symbol'),
+                    'Sector': row.get('Sector'),
+                    'Stock price': row.get('Price'),
+                }
+                )
+        return result
 
 
 @cache_decorator
-def get_top_10_companies(reader: csv.DictReader) -> list:
-    result = []
-    for row in reader:
-        result.append((row['Name'], float(row['Price'])))
+def get_all_companies_by_sector(sector: str) -> list:
+    with OpenFileAsDict('sp500.csv', 'r') as data:
+        result = []
+        for row in data:
+            if sector.lower() == row.get('Sector').lower():
+                result.append(row.get('Name'))
 
-    result.sort(key=itemgetter(1), reverse=True)
-    return result[:10]
+        return result
+
+
+def calculate_average_price() -> float:
+    with OpenFileAsDict('sp500.csv', 'r') as data:
+        result = []
+        for row in data:
+            result.append(float(row.get('Price')))
+
+        return round(mean(result), 2)
+
+
+def get_top_10_companies() -> list:
+    with OpenFileAsDict('sp500.csv', 'r') as data:
+        result = []
+        for row in data:
+            result.append((row.get('Name'), float(row.get('Price'))))
+
+        result.sort(key=itemgetter(1), reverse=True)
+        return result[:10]
