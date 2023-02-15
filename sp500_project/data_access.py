@@ -3,7 +3,8 @@ import csv
 
 def get_all_records() -> list:
     with open('sp500.csv', 'r') as file:
-        return list(csv.DictReader(file))
+        for row in csv.DictReader(file):
+            yield row
 
 
 def add_new_records(data: list, mode: str, rest_value=None) -> None:

@@ -29,8 +29,7 @@ def validate_new_company_symbol(symbol: str) -> None:
         raise AddNewCompanyError('The symbol must consist '
                                  'of 3-6 uppercase Latin letters.')
     else:
-        data = get_all_records()
-        for row in data:
+        for row in get_all_records():
             if symbol == row.get('Symbol'):
                 raise AddNewCompanyError(f'"{symbol}" already exists in the '
                                          f'table. The symbol must be unique.')
@@ -42,8 +41,7 @@ def validate_new_company_name(company_name: str) -> None:
                                  f'3-50 characters. You have entered: '
                                  f'{len(company_name)} characters.')
     else:
-        data = get_all_records()
-        for row in data:
+        for row in get_all_records():
             if company_name == row.get('Name'):
                 raise AddNewCompanyError(f'"{company_name}" already exists in '
                                          f'the table. The name must be '
@@ -51,8 +49,7 @@ def validate_new_company_name(company_name: str) -> None:
 
 
 def validate_new_company_sector(sector: str) -> bool | None:
-    data = get_all_records()
-    for row in data:
+    for row in get_all_records():
         if sector == row.get('Sector'):
             return True
 
@@ -75,8 +72,7 @@ def validate_new_company_price(price: str) -> None:
 
 
 def validate_company_symbol(company_symbol: str) -> bool | None:
-    data = get_all_records()
-    for row in data:
+    for row in get_all_records():
         if company_symbol.lower() == row.get('Symbol').lower():
             return True
 

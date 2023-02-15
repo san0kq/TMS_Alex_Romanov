@@ -8,9 +8,8 @@ from data_access import get_all_records, add_new_records, truncate_data
 
 
 def find_info_by_name(company_name: str) -> list | str:
-    data = get_all_records()
     result = []
-    for row in data:
+    for row in get_all_records():
         if company_name.lower() in row.get('Name').lower():
             result.append({
                 'Name': row.get('Name'),
@@ -24,9 +23,8 @@ def find_info_by_name(company_name: str) -> list | str:
 
 
 def find_info_by_symbol(company_symbol: str) -> list:
-    data = get_all_records()
     result = []
-    for row in data:
+    for row in get_all_records():
         if company_symbol.lower() == row.get('Symbol').lower():
             result.append({
                 'Name': row.get('Name'),
@@ -40,9 +38,8 @@ def find_info_by_symbol(company_symbol: str) -> list:
 
 
 def get_all_companies_by_sector(sector: str) -> list:
-    data = get_all_records()
     result = []
-    for row in data:
+    for row in get_all_records():
         if sector.lower() == row.get('Sector').lower():
             result.append(row.get('Name'))
 
@@ -50,18 +47,16 @@ def get_all_companies_by_sector(sector: str) -> list:
 
 
 def calculate_average_price() -> float:
-    data = get_all_records()
     result = []
-    for row in data:
+    for row in get_all_records():
         result.append(float(row.get('Price')))
 
     return round(mean(result), 2)
 
 
 def get_top_10_companies() -> list:
-    data = get_all_records()
     result = []
-    for row in data:
+    for row in get_all_records():
         result.append((row.get('Name'), float(row.get('Price'))))
 
     result.sort(key=itemgetter(1), reverse=True)
@@ -85,9 +80,8 @@ def add_new_company(symbol: str,
 
 
 def update_company_name(symbol: str, company_name: str) -> None:
-    data = get_all_records()
     new_data = []
-    for row in data:
+    for row in get_all_records():
         if symbol.lower() == row.get('Symbol').lower():
             row['Name'] = company_name
 
@@ -96,9 +90,8 @@ def update_company_name(symbol: str, company_name: str) -> None:
 
 
 def delete_company(symbol: str) -> None:
-    data = get_all_records()
     new_data = []
-    for row in data:
+    for row in get_all_records():
         if symbol.lower() == row.get('Symbol').lower():
             continue
         new_data.append(row)
