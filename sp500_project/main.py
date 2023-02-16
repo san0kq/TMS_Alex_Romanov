@@ -4,7 +4,6 @@ from time import sleep
 from errors import (
     UserChoiceError,
     AddNewCompanyError,
-    UpdateCompanyError,
     RecordsNumberError,
     EmptyInputError,
 )
@@ -24,9 +23,7 @@ from validators import (
     validate_user_choice,
     validate_new_company_name,
     validate_new_company_symbol,
-    validate_new_company_sector,
     validate_new_company_price,
-    validate_company_symbol,
     validate_empty_input,
     validate_records_number,
 )
@@ -89,7 +86,6 @@ while True:
             company_name = input('Name: ')
             validate_new_company_name(company_name=company_name)
             sector = input('Sector: ')
-            validate_new_company_sector(sector=sector)
             price = input('Price: ')
             validate_new_company_price(price=price)
 
@@ -106,7 +102,6 @@ while True:
     elif choice == '7':
         try:
             symbol = input('Enter the symbol of company to update: ')
-            validate_company_symbol(company_symbol=symbol)
             new_company_name = input('Enter the new name of company: ')
             validate_new_company_name(company_name=new_company_name)
             update_company_name(symbol=symbol, company_name=new_company_name)
@@ -114,20 +109,10 @@ while True:
             print(err, file=stderr)
             sleep(0.5)
             continue
-        except UpdateCompanyError as err:
-            print(err, file=stderr)
-            sleep(0.5)
-            continue
 
     elif choice == '8':
-        try:
-            symbol = input('Enter the symbol of company to delete: ')
-            validate_company_symbol(company_symbol=symbol)
-            delete_company(symbol=symbol)
-        except UpdateCompanyError as err:
-            print(err, file=stderr)
-            sleep(0.5)
-            continue
+        symbol = input('Enter the symbol of company to delete: ')
+        delete_company(symbol=symbol)
 
     elif choice == '9':
         warning = input('Are you sure you want to delete the file? [YES/NO] ')

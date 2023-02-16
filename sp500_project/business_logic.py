@@ -1,10 +1,22 @@
 from operator import itemgetter
 from statistics import mean
 from random import randint, uniform
+from sys import stderr
+from time import sleep
 
 from faker import Faker
 
-from data_access import get_all_records, add_new_records, truncate_data
+from data import (
+    validate_record_exists,
+    validate_new_company_sector,
+    validate_symbol_not_exists,
+    RecordAlreadyExistsError,
+    SectorExistsError,
+    SymbolExistsError,
+    get_all_records,
+    add_new_records,
+    truncate_data,
+)
 
 
 def find_info_by_name(company_name: str) -> list | str:
@@ -69,33 +81,54 @@ def add_new_company(symbol: str,
                     sector: str,
                     price: str,
                     ) -> None:
-    new_company = [{
-        'Symbol': symbol,
-        'Name': name,
-        'Sector': sector,
-        'Price': price,
-    }]
+    try:
+        validate_record_exists(value=symbol, key='Symbol')
+        validate_record_exists(value=name, key='Name')
+        validate_new_company_sector(sector=sector)
 
-    add_new_records(data=new_company, mode='a', rest_value='None')
+        new_company = [{
+            'Symbol': symbol,
+            'Name': name,
+            'Sector': sector,
+            'Price': price,
+        }]
+
+        add_new_records(data=new_company, mode='a', rest_value='None')
+    except RecordAlreadyExistsError as err:
+        print(err, file=stderr)
+        sleep(0.5)
+    except SectorExistsError as err:
+        print(err, file=stderr)
+        sleep(0.5)
 
 
 def update_company_name(symbol: str, company_name: str) -> None:
-    new_data = []
-    for row in get_all_records():
-        if symbol.lower() == row.get('Symbol').lower():
-            row['Name'] = company_name
+    try:
+        validate_symbol_not_exists(company_symbol=symbol)
+        new_data = []
+        for row in get_all_records():
+            if symbol.lower() == row.get('Symbol').lower():
+                row['Name'] = company_name
 
-        new_data.append(row)
-    add_new_records(data=new_data, mode='w')
+            new_data.append(row)
+        add_new_records(data=new_data, mode='w')
+    except SymbolExistsError as err:
+        print(err, file=stderr)
+        sleep(0.5)
 
 
 def delete_company(symbol: str) -> None:
-    new_data = []
-    for row in get_all_records():
-        if symbol.lower() == row.get('Symbol').lower():
-            continue
-        new_data.append(row)
-    add_new_records(data=new_data, mode='w')
+    try:
+        validate_symbol_not_exists(company_symbol=symbol)
+        new_data = []
+        for row in get_all_records():
+            if symbol.lower() == row.get('Symbol').lower():
+                continue
+            new_data.append(row)
+        add_new_records(data=new_data, mode='w')
+    except SymbolExistsError as err:
+        print(err, file=stderr)
+        sleep(0.5)
 
 
 def truncate_all() -> str:

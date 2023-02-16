@@ -3,11 +3,9 @@ import re
 from errors import (
     UserChoiceError,
     AddNewCompanyError,
-    UpdateCompanyError,
     RecordsNumberError,
     EmptyInputError,
 )
-from data_access import get_all_records
 
 
 def validate_user_choice(choice: str) -> None:
@@ -28,11 +26,6 @@ def validate_new_company_symbol(symbol: str) -> None:
     if not re.search(r'^[A-Z]{3,6}$', symbol):
         raise AddNewCompanyError('The symbol must consist '
                                  'of 3-6 uppercase Latin letters.')
-    else:
-        for row in get_all_records():
-            if symbol == row.get('Symbol'):
-                raise AddNewCompanyError(f'"{symbol}" already exists in the '
-                                         f'table. The symbol must be unique.')
 
 
 def validate_new_company_name(company_name: str) -> None:
@@ -40,26 +33,6 @@ def validate_new_company_name(company_name: str) -> None:
         raise AddNewCompanyError(f'The company name bust consist of '
                                  f'3-50 characters. You have entered: '
                                  f'{len(company_name)} characters.')
-    else:
-        for row in get_all_records():
-            if company_name == row.get('Name'):
-                raise AddNewCompanyError(f'"{company_name}" already exists in '
-                                         f'the table. The name must be '
-                                         f'unique.')
-
-
-def validate_new_company_sector(sector: str) -> bool | None:
-    for row in get_all_records():
-        if sector == row.get('Sector'):
-            return True
-
-    raise AddNewCompanyError(f'The "{sector}" sector does not exist in the '
-                             f'table. Please select an existing sector -\n'
-                             f'["Consumer Discretionary", "Consumer Staples", '
-                             f'"Energy", "Financials",\n"Materials", '
-                             f'"Telecommunication Services", "Real Estate", '
-                             f'"Industrials", "Utilities",\n"Health Care", '
-                             f'"Information Technology"]')
 
 
 def validate_new_company_price(price: str) -> None:
@@ -69,15 +42,6 @@ def validate_new_company_price(price: str) -> None:
     elif not (price.count('.') == 1 and 0 <= float(price) <= 1000):
         raise AddNewCompanyError('The number must be a floating-point value '
                                  'and in the range from 0 to 1000')
-
-
-def validate_company_symbol(company_symbol: str) -> bool | None:
-    for row in get_all_records():
-        if company_symbol.lower() == row.get('Symbol').lower():
-            return True
-
-    raise UpdateCompanyError(f'The "{company_symbol}" symbol does not exist '
-                             f'in the table. Please select an existing symbol')
 
 
 def validate_records_number(records_number: str) -> None:
