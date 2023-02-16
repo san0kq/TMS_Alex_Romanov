@@ -1,8 +1,9 @@
+from functools import wraps
 from operator import itemgetter
 from statistics import mean
 from random import randint, uniform
 from sys import stderr
-from time import sleep
+from time import sleep, time
 
 from faker import Faker
 
@@ -19,7 +20,24 @@ from data import (
 )
 
 
-def find_info_by_name(company_name: str) -> list | str:
+def cache(cache_time=60):
+    def inner(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            cache_key = args
+            if cache_key not in wrapper.cache:
+                wrapper.cache[cache_key] = (func(*args, **kwargs), time())
+            else:
+                if time() - wrapper.cache[cache_key][1] > cache_time:
+                    wrapper.cache[cache_key] = (func(*args, **kwargs), time())
+            return wrapper.cache[cache_key][0]
+        wrapper.cache = dict()
+        return wrapper
+    return inner
+
+
+@cache(30)
+def find_info_by_name(company_name: str) -> list:
     result = []
     for row in get_all_records():
         if company_name.lower() in row.get('Name').lower():
@@ -34,6 +52,7 @@ def find_info_by_name(company_name: str) -> list | str:
     return result
 
 
+@cache(30)
 def find_info_by_symbol(company_symbol: str) -> list:
     result = []
     for row in get_all_records():
@@ -49,6 +68,7 @@ def find_info_by_symbol(company_symbol: str) -> list:
     return result
 
 
+@cache(30)
 def get_all_companies_by_sector(sector: str) -> list:
     result = []
     for row in get_all_records():
