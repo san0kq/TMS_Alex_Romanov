@@ -9,5 +9,6 @@ def current_time() -> str:
     return datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
 
 
-list_1 = [current_time() for _ in range(int(input('Введите кол-во элементов в списке: ')))]
+list_1 = [current_time() for _ in
+          range(int(input('Введите кол-во элементов в списке: ')))]
 print(list_1)

@@ -26,15 +26,16 @@ def factorial(n: int) -> int:
     """This is recursive function
      to find the factorial(n)"""
     if n > 0:  # Base condition
-        return factorial(n-1) * n
+        return factorial(n - 1) * n
     return 1
 
 
 @measure_execution_time
 def reverse_measure(func, *args, **kwargs):
-    """This function is needed to measure execution time of recursive function"""
+    """This function is needed to measure execution
+    time of recursive function"""
     return func(*args, **kwargs)
 
 
-func_range(10)  # Measure execution time of func_range(10)
-reverse_measure(factorial, 900)  # Measure execution time of recursive function factorial(900)
+func_range(10)
+reverse_measure(factorial, 900)

@@ -5,7 +5,8 @@ def what_number(number: str) -> NoReturn:
     """This is function to check number's type in string"""
     if number.isdigit():
         print(f'Вы ввели положительное целое число: {number}')
-    elif '-' in number and '.' in number and number.count('-') == 1 and number.count('.') == 1:
+    elif '-' in number and '.' in number and number.count('-') == 1 \
+            and number.count('.') == 1:
         new_str = number.replace('-', '')
         new_str = new_str.replace('.', '')
         if new_str.isdigit():
