@@ -21,22 +21,22 @@ class Vector:
         return result
 
     def __gt__(self, other) -> bool:
-        return self.length() > other.length()
+        return self.length() > other
 
     def __lt__(self, other) -> bool:
-        return self.length() < other.length()
+        return self.length() < other
 
     def __ge__(self, other) -> bool:
-        return self.length() >= other.length()
+        return self.length() >= other
 
     def __le__(self, other) -> bool:
-        return self.length() <= other.length()
+        return self.length() <= other
 
     def __eq__(self, other) -> bool:
-        return self.length() == other.length()
+        return self.length() == other
 
     def __ne__(self, other) -> bool:
-        return self.length() != other.length()
+        return self.length() != other
 
 
 vector_1 = Vector((1, 1), (3, 2))
