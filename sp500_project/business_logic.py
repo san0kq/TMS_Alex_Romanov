@@ -24,7 +24,7 @@ def cache(cache_time=60):
     def inner(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            cache_key = args
+            cache_key = (args, tuple(kwargs.values()))
             if cache_key not in wrapper.cache:
                 wrapper.cache[cache_key] = (func(*args, **kwargs), time())
             else:
