@@ -1,0 +1,2 @@
+class EmptyLibraryError(Exception):
+    pass
