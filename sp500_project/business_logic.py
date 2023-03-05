@@ -8,16 +8,15 @@ from time import sleep, time
 from faker import Faker
 
 from data import (
-    validate_record_exists,
-    validate_new_company_sector,
-    validate_symbol_not_exists,
     RecordAlreadyExistsError,
     SectorExistsError,
     SymbolExistsError,
-    get_all_records,
-    add_new_records,
-    truncate_data,
+    db_provider,
+    DATABASE_NAME,
+    DATABASE_TYPE,
 )
+
+database = db_provider(data_name=DATABASE_NAME, data_type=DATABASE_TYPE)
 
 
 def cache(cache_time=60):
@@ -39,7 +38,7 @@ def cache(cache_time=60):
 @cache(30)
 def find_info_by_name(company_name: str) -> list:
     result = []
-    for row in get_all_records():
+    for row in database.list():
         if company_name.lower() in row.get('Name').lower():
             result.append({
                 'Name': row.get('Name'),
@@ -55,7 +54,7 @@ def find_info_by_name(company_name: str) -> list:
 @cache(30)
 def find_info_by_symbol(company_symbol: str) -> list:
     result = []
-    for row in get_all_records():
+    for row in database.list():
         if company_symbol.lower() == row.get('Symbol').lower():
             result.append({
                 'Name': row.get('Name'),
@@ -71,7 +70,7 @@ def find_info_by_symbol(company_symbol: str) -> list:
 @cache(30)
 def get_all_companies_by_sector(sector: str) -> list:
     result = []
-    for row in get_all_records():
+    for row in database.list():
         if sector.lower() == row.get('Sector').lower():
             result.append(row.get('Name'))
 
@@ -80,7 +79,7 @@ def get_all_companies_by_sector(sector: str) -> list:
 
 def calculate_average_price() -> float:
     result = []
-    for row in get_all_records():
+    for row in database.list():
         result.append(float(row.get('Price')))
 
     return round(mean(result), 2)
@@ -88,7 +87,7 @@ def calculate_average_price() -> float:
 
 def get_top_10_companies() -> list:
     result = []
-    for row in get_all_records():
+    for row in database.list():
         result.append((row.get('Name'), float(row.get('Price'))))
 
     result.sort(key=itemgetter(1), reverse=True)
@@ -102,9 +101,9 @@ def add_new_company(symbol: str,
                     price: str,
                     ) -> None:
     try:
-        validate_record_exists(value=symbol, key='Symbol')
-        validate_record_exists(value=name, key='Name')
-        validate_new_company_sector(sector=sector)
+        database.validate_record_exists(value=symbol, key='Symbol')
+        database.validate_record_exists(value=name, key='Name')
+        database.validate_new_company_sector(sector=sector)
 
         new_company = [{
             'Symbol': symbol,
@@ -113,7 +112,7 @@ def add_new_company(symbol: str,
             'Price': price,
         }]
 
-        add_new_records(data=new_company, mode='a', rest_value='None')
+        database.create(data=new_company)
     except RecordAlreadyExistsError as err:
         print(err, file=stderr)
         sleep(0.5)
@@ -124,14 +123,14 @@ def add_new_company(symbol: str,
 
 def update_company_name(symbol: str, company_name: str) -> None:
     try:
-        validate_symbol_not_exists(company_symbol=symbol)
+        database.validate_symbol_not_exists(company_symbol=symbol)
         new_data = []
-        for row in get_all_records():
+        for row in database.list():
             if symbol.lower() == row.get('Symbol').lower():
                 row['Name'] = company_name
 
             new_data.append(row)
-        add_new_records(data=new_data, mode='w')
+        database.update(data=new_data)
     except SymbolExistsError as err:
         print(err, file=stderr)
         sleep(0.5)
@@ -139,20 +138,20 @@ def update_company_name(symbol: str, company_name: str) -> None:
 
 def delete_company(symbol: str) -> None:
     try:
-        validate_symbol_not_exists(company_symbol=symbol)
+        database.validate_symbol_not_exists(company_symbol=symbol)
         new_data = []
-        for row in get_all_records():
+        for row in database.list():
             if symbol.lower() == row.get('Symbol').lower():
                 continue
             new_data.append(row)
-        add_new_records(data=new_data, mode='w')
+        database.update(data=new_data)
     except SymbolExistsError as err:
         print(err, file=stderr)
         sleep(0.5)
 
 
 def truncate_all() -> str:
-    return truncate_data()
+    return database.delete()
 
 
 def populate_file_random(records_number: str) -> None:
@@ -172,4 +171,4 @@ def populate_file_random(records_number: str) -> None:
         }
         new_data.append(row)
 
-    add_new_records(data=new_data, mode='w', rest_value='None')
+    database.update(data=new_data, rest_value='None')
