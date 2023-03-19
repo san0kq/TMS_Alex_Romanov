@@ -1,0 +1,10 @@
+{
+  "Phone": [
+    "Model",
+    "Year"
+  ],
+  "Car": [
+    "Model",
+    "Year"
+  ]
+}
