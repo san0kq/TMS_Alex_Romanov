@@ -86,4 +86,5 @@ class TTLCache(SimpleCache, MaxSizeMixin):
 
     def get(self, cache_key: Any) -> Any:
         self._cache.move_to_end(cache_key)
+        self._cache[cache_key][1] = time()
         return self._cache.get(cache_key)[0]
