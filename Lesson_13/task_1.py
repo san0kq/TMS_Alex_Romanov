@@ -8,6 +8,7 @@
 """
 
 from string import ascii_lowercase, ascii_uppercase
+from typing import Iterator
 
 
 class AlphabetIterator:
@@ -44,7 +45,7 @@ class Alphabet2:
         self.end = end
         self.lower = lower
 
-    def __iter__(self) -> iter:
+    def __iter__(self) -> Iterator[str]:
         index = ascii_lowercase.index(self.end.lower())
         if self.lower:
             return iter(ascii_lowercase[:index + 1])

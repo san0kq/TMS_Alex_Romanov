@@ -5,7 +5,7 @@ import timeit
 list_1 = [randint(1, 5) for i in range(10)]  # List with random elements
 
 
-def count_dupl(list_: list) -> dict:
+def count_dupl(list_: list[int]) -> dict[int, int]:
     """This is function to counting
     duplicate elements in list"""
     result = {}
@@ -17,7 +17,7 @@ def count_dupl(list_: list) -> dict:
     return result
 
 
-def count_dupl2(list_: list) -> dict:
+def count_dupl2(list_: list[int]) -> dict[int, int]:
     """This is function to counting
     duplicate elements in list by Counter"""
     return dict(Counter(list_))

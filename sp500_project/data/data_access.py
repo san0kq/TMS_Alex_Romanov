@@ -1,5 +1,6 @@
 import csv
 import json
+from typing import Union, Generator, Optional
 
 from .errors import (
     RecordAlreadyExistsError,
@@ -8,20 +9,24 @@ from .errors import (
 )
 
 
-def db_provider(data_name: str, data_type: str):
+def db_provider(
+        data_name: str,
+        data_type: str) -> Optional[Union['Sp500Json', 'Sp500csv']]:
     if data_type == '.csv':
         return Sp500csv(data_name, data_type)
     elif data_type == '.json':
         return Sp500Json(data_name, data_type)
+    else:
+        return None
 
 
 class FileDB:
-    def __init__(self, data_name: str, data_type):
+    def __init__(self, data_name: str, data_type: str) -> None:
         self.data_name = data_name
         self.data_type = data_type
         self.database = self.data_name + self.data_type
 
-    def list(self):
+    def list(self) -> Generator[dict[str, str | float], None, None]:
         with open(self.database, 'r') as file:
             if self.data_type == '.csv':
                 for row in csv.DictReader(file):
@@ -38,7 +43,7 @@ class FileDB:
                                                f'the table. The value must be '
                                                f'unique.')
 
-    def validate_new_company_sector(self, sector: str) -> bool | None:
+    def validate_new_company_sector(self, sector: str) -> Optional[bool]:
         for row in self.list():
             if sector == row.get('Sector'):
                 return True
@@ -52,7 +57,9 @@ class FileDB:
                                 f'\n"Health Care", "Information Technology"]'
                                 )
 
-    def validate_symbol_not_exists(self, company_symbol: str) -> bool | None:
+    def validate_symbol_not_exists(
+            self,
+            company_symbol: str) -> Optional[bool]:
         for row in self.list():
             if company_symbol.lower() == row.get('Symbol').lower():
                 return True
@@ -63,7 +70,7 @@ class FileDB:
 
 
 class Sp500csv(FileDB):
-    def create(self, data: list) -> None:
+    def create(self, data: list[dict[str, str | int | float]]) -> None:
         with open(self.database, 'a') as csv_file:
             fieldnames = ['Symbol', 'Name', 'Sector', 'Price',
                           'Price/Earnings',
@@ -77,7 +84,10 @@ class Sp500csv(FileDB):
                                     restval='None')
             writer.writerows(data)
 
-    def update(self, data: list, rest_value=None) -> None:
+    def update(
+            self,
+            data: list[dict[str, str | int | float]],
+            rest_value: Optional[str] = None) -> None:
         with open(self.database, 'w') as csv_file:
             fieldnames = ['Symbol', 'Name', 'Sector', 'Price',
                           'Price/Earnings',
@@ -98,7 +108,7 @@ class Sp500csv(FileDB):
 
 
 class Sp500Json(FileDB):
-    def create(self, data: list) -> None:
+    def create(self, data: list[dict[str, str | int | float]]) -> None:
         with open(self.database, 'r') as file:
             json_data = json.load(file)
         result = {
@@ -122,7 +132,10 @@ class Sp500Json(FileDB):
         with open(self.database, 'w') as file:
             json.dump(json_data, file, indent=2)
 
-    def update(self, data: list, rest_value=None) -> None:
+    def update(
+            self,
+            data: list[dict[str, str | int | float]],
+            rest_value: Optional[str] = None) -> None:
         with open(self.database, 'w') as file:
             json.dump(data, file, indent=2)
 

@@ -12,12 +12,15 @@ merged_dict = {
     'e': [None, 5]
     }
 """
+from typing import Optional
 
 first_dict = {'a': 1, 'b': 2, 'c': 3}
 second_dict = {'c': 3, 'd': 4, 'e': 5}
 
 
-def merge_dict(dict_1: dict, dict_2: dict) -> dict:
+def merge_dict(
+        dict_1: dict[str, int],
+        dict_2: dict[str, int]) -> dict[str, list[Optional[int]]]:
     merged_dict = {}
     for key in sorted(set(dict_1.keys() | set(dict_2.keys()))):
         merged_dict[key] = [dict_1.get(key), dict_2.get(key)]

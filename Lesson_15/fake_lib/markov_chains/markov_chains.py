@@ -10,7 +10,7 @@ process such as "Markov chains".
 from .file_utils import get_file_path
 
 
-def generate_tokens(file: str) -> dict:
+def generate_tokens(file: str) -> dict[str, list[str]]:
     tokens = dict()
     with open(file) as file:
         file = file.read().splitlines()

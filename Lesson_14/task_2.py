@@ -14,16 +14,19 @@ created_at, в который сохранить текущий timestamp (unix 
 
 from time import time
 import re
+from typing import Optional, Any
 
 
 class Censored:
-    def __set_name__(self, owner, name):
+    def __set_name__(self, owner: type, name: str) -> None:
         self.name = '_' + name
 
-    def __get__(self, instance, owner):
+    def __get__(self,
+                instance: Optional[object],
+                owner: Optional[type]) -> Any:
         return getattr(instance, self.name)
 
-    def __set__(self, instance, value):
+    def __set__(self, instance: Optional[object], value: str) -> None:
         censored_value = re.sub(r'\b[fF][uU][cC][kK]\b', '****', value)
         setattr(instance, self.name, censored_value)
 

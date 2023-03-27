@@ -13,7 +13,7 @@ peek(self) - возвращает верхушку стека (последни�
 Реализовать функцию (обычную, НЕ метод в классе), которая на вход принимает
 строку из скобок И возвращает True, если все скобки закрыты, False - если нет
 """
-from typing import Any
+from typing import Any, Optional
 
 
 class Stack:
@@ -23,18 +23,20 @@ class Stack:
     def push(self, element: Any) -> None:
         self._stack.append(element)
 
-    def pop(self) -> Any:
+    def pop(self) -> Optional[Any]:
         if self._stack:
             return self._stack.pop()
-        return None
+        else:
+            return None
 
     def is_empty(self) -> bool:
         return not bool(self._stack)
 
-    def peek(self) -> Any:
+    def peek(self) -> Optional[Any]:
         if self._stack:
             return self._stack[-1]
-        return None
+        else:
+            return None
 
 
 def valid_parentheses(string: str) -> bool:

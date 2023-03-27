@@ -1,7 +1,4 @@
-from typing import NoReturn
-
-
-def what_number(number: str) -> NoReturn:
+def what_number(number: str) -> None:
     """This is function to check number's type in string"""
     if number.isdigit():
         print(f'Вы ввели положительное целое число: {number}')

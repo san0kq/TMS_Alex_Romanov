@@ -1,7 +1,8 @@
 import timeit
+from typing import Generator
 
 
-def fib(n):
+def fib(n: int) -> Generator[int, None, None]:
     """
     Generator fibonacci numbers. n - numbers of elements you need
     """

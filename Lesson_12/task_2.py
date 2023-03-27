@@ -28,6 +28,7 @@ find_the_biggest_book(self) - возвращает книгу, в которой
 """
 
 from re import search
+from typing import Optional, Any
 
 from errors import EmptyLibraryError
 
@@ -47,7 +48,7 @@ class Book:
         self.author = author
         self.price = price
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, object]:
         result = {
             'name': self.name,
             'description': self.description,
@@ -57,26 +58,28 @@ class Book:
         }
         return result
 
-    def contains_word(self, word: str) -> bool | None:
+    def contains_word(self, word: str) -> Optional[bool]:
         if search(rf'\b{word}\b', self.name + ' ' + self.description):
             return True
+        else:
+            return None
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: Any) -> bool:
         return self.pages > other
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: Any) -> bool:
         return self.pages < other
 
-    def __ge__(self, other) -> bool:
+    def __ge__(self, other: Any) -> bool:
         return self.pages >= other
 
-    def __le__(self, other) -> bool:
+    def __le__(self, other: Any) -> bool:
         return self.pages <= other
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         return self.to_dict() == other
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return self.to_dict() != other
 
 
@@ -87,13 +90,13 @@ class Library:
     def add_book(self, book: Book) -> None:
         self.books.append(book)
 
-    def get_books(self) -> list:
+    def get_books(self) -> list[dict[str, str | int | float]]:
         return [book.to_dict() for book in self.books]
 
     def remove_book(self, book: Book) -> None:
         self.books.remove(book)
 
-    def find_the_biggest_book(self) -> Book | None:
+    def find_the_biggest_book(self) -> Optional[Book]:
         if len(self.books) != 0:
             return sorted(self.books)[-1]
         else:

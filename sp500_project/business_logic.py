@@ -4,6 +4,7 @@ from statistics import mean
 from random import randint, uniform
 from sys import stderr
 from time import sleep, time
+from typing import Callable, TypeVar, ParamSpec, Any
 
 from faker import Faker
 
@@ -18,11 +19,15 @@ from data import (
 
 database = db_provider(data_name=DATABASE_NAME, data_type=DATABASE_TYPE)
 
+RT = TypeVar('RT')
+P = ParamSpec('P')
 
-def cache(cache_time=60):
-    def inner(func):
+
+def cache(cache_time: int = 60
+          ) -> Callable[[Callable[..., RT]], Callable[..., RT]]:
+    def inner(func: Callable[..., RT]) -> Callable[..., RT]:
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
             cache_key = (args, tuple(kwargs.values()))
             if cache_key not in wrapper.cache:
                 wrapper.cache[cache_key] = (func(*args, **kwargs), time())
@@ -36,7 +41,7 @@ def cache(cache_time=60):
 
 
 @cache(30)
-def find_info_by_name(company_name: str) -> list:
+def find_info_by_name(company_name: str) -> list[dict[str, str | float]]:
     result = []
     for row in database.list():
         if company_name.lower() in row.get('Name').lower():
@@ -52,7 +57,7 @@ def find_info_by_name(company_name: str) -> list:
 
 
 @cache(30)
-def find_info_by_symbol(company_symbol: str) -> list:
+def find_info_by_symbol(company_symbol: str) -> list[dict[str, str | float]]:
     result = []
     for row in database.list():
         if company_symbol.lower() == row.get('Symbol').lower():
@@ -68,7 +73,7 @@ def find_info_by_symbol(company_symbol: str) -> list:
 
 
 @cache(30)
-def get_all_companies_by_sector(sector: str) -> list:
+def get_all_companies_by_sector(sector: str) -> list[str]:
     result = []
     for row in database.list():
         if sector.lower() == row.get('Sector').lower():
@@ -85,7 +90,7 @@ def calculate_average_price() -> float:
     return round(mean(result), 2)
 
 
-def get_top_10_companies() -> list:
+def get_top_10_companies() -> list[tuple[str, float]]:
     result = []
     for row in database.list():
         result.append((row.get('Name'), float(row.get('Price'))))

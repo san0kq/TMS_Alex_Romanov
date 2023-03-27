@@ -1,4 +1,4 @@
-from typing import Type, TypeVar
+from typing import Type, TypeVar, Any
 
 from .providers import (
     EmailProvider,
@@ -26,7 +26,7 @@ class FakeFactoryIterator:
         self.counter = counter
         self.count = count
 
-    def __next__(self) -> str:
+    def __next__(self) -> Any:
         if self.counter == self.count:
             raise StopIteration
         self.counter += 1
@@ -38,7 +38,7 @@ class FakeFactory:
         self.provider = provider()
         self.count = count
 
-    def generate(self) -> str:
+    def generate(self) -> Any:
         return self.provider()
 
     def __iter__(self) -> FakeFactoryIterator:

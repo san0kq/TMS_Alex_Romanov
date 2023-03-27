@@ -1,11 +1,15 @@
 from collections import Counter
 from random import randint
 from time import time
+from typing import Callable, ParamSpec, TypeVar
+
+RT = TypeVar('RT')
+P = ParamSpec('P')
 
 
-def measure_execution_time(func):
+def measure_execution_time(func: Callable[..., RT]) -> Callable[..., RT]:
     """Decorator to measure execution time """
-    def wrapper(*args):
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> RT:
         start = time()
         result = func(*args)
         end = time()
@@ -15,7 +19,7 @@ def measure_execution_time(func):
 
 
 @measure_execution_time
-def count_dupl(list_: list) -> dict:
+def count_dupl(list_: list[int]) -> dict[int, int]:
     """This is function to counting
     duplicate elements in list"""
     result = {}

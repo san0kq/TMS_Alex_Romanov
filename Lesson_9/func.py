@@ -2,22 +2,26 @@ import csv
 from operator import itemgetter
 from statistics import mean
 from functools import wraps
+from typing import Iterable, Any, Callable, TypeVar, ParamSpec
+
+RT = TypeVar('RT')
+P = ParamSpec('P')
 
 
 class OpenFileAsDict(object):
-    def __init__(self, file_name, method):
+    def __init__(self, file_name: str, method: str) -> None:
         self.file = open(file_name, method)
 
-    def __enter__(self):
+    def __enter__(self) -> Iterable[dict[str, str | float]]:
         return csv.DictReader(self.file)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         self.file.close()
 
 
-def cache_decorator(func):
+def cache_decorator(func: Callable[..., RT]) -> Callable[..., RT]:
     @wraps(func)
-    def wrapper(*args):
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
         cache_key = args
         if cache_key not in wrapper.cache:
             wrapper.cache[cache_key] = func(*args)
@@ -28,7 +32,7 @@ def cache_decorator(func):
 
 
 @cache_decorator
-def find_info_by_name(company_name: str) -> list | str:
+def find_info_by_name(company_name: str) -> list[dict[str, str | float]] | str:
     with OpenFileAsDict('sp500.csv', 'r') as data:
         result = []
         if company_name == '':
@@ -47,7 +51,7 @@ def find_info_by_name(company_name: str) -> list | str:
 
 
 @cache_decorator
-def find_info_by_symbol(company_symbol: str) -> list:
+def find_info_by_symbol(company_symbol: str) -> list[dict[str, str | float]]:
     with OpenFileAsDict('sp500.csv', 'r') as data:
         result = []
         for row in data:
@@ -63,7 +67,7 @@ def find_info_by_symbol(company_symbol: str) -> list:
 
 
 @cache_decorator
-def get_all_companies_by_sector(sector: str) -> list:
+def get_all_companies_by_sector(sector: str) -> list[str]:
     with OpenFileAsDict('sp500.csv', 'r') as data:
         result = []
         for row in data:
@@ -82,7 +86,7 @@ def calculate_average_price() -> float:
         return round(mean(result), 2)
 
 
-def get_top_10_companies() -> list:
+def get_top_10_companies() -> list[tuple[str, float]]:
     with OpenFileAsDict('sp500.csv', 'r') as data:
         result = []
         for row in data:

@@ -1,11 +1,14 @@
 from random import randint, choice
 from string import ascii_letters, digits, ascii_uppercase
+from typing import ParamSpec
 
 from .markov_chains import markov_chains
 
+P = ParamSpec('P')
+
 
 class EmailProvider:
-    def __call__(self, *args, **kwargs) -> str:
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> str:
         mails = (
             '@gmail.com',
             '@mail.com',
@@ -24,7 +27,7 @@ class EmailProvider:
 
 
 class PhoneProvider:
-    def __call__(self, *args, **kwargs) -> str:
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> str:
         operators = (
             '+37533',
             '+37529',
@@ -46,7 +49,7 @@ class PhoneProvider:
 
 
 class BankCardProvider:
-    def __call__(self, *args, **kwargs) -> str:
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> str:
         card_number = ''
         for _ in range(15):
             card_number += choice(digits)
@@ -67,7 +70,7 @@ class BankCardProvider:
 
 
 class NameProvider:
-    def __call__(self, *args, **kwargs) -> str:
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> str:
         first_name = choice(ascii_uppercase)
         last_name = choice(ascii_uppercase)
         for _ in range(randint(3, 10)):

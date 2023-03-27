@@ -22,6 +22,7 @@ for i in linked_lst:
 операции ==, !=, >=, <=, >, < - сравнивать по атрибуту data
 """
 import functools
+from typing import Optional, Any
 
 
 class IncorrectDataError(Exception):
@@ -32,7 +33,7 @@ class LinkedListIterator:
     def __init__(self, head: 'Element') -> None:
         self._head = head
 
-    def __next__(self) -> int:
+    def __next__(self) -> Optional[int]:
         if not self._head:
             raise StopIteration
         current_element = self._head
@@ -75,7 +76,7 @@ class LinkedList:
             current_element = next_element
         self._head = previous_element
 
-    def println(self) -> list:
+    def println(self) -> list[int]:
         current_element = self._head
         result = []
         while current_element:
@@ -90,10 +91,10 @@ class Element:
         self._next = None
         self.data = data
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         return self._data < other
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: Any) -> bool:
         return self._data < other
 
     def __str__(self) -> str:
