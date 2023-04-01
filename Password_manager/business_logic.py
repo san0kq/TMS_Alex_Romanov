@@ -8,13 +8,10 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import base64
 from decouple import config
-from typing import ParamSpec, no_type_check
-
+from typing import Any
 
 from TMS_Alex_Romanov.rand_gen import RandGen, RandWord
 from data import db_provider, DB_NAME, DB_TYPE
-
-P = ParamSpec('P')
 
 
 class Code:
@@ -22,7 +19,7 @@ class Code:
         with open('code.json') as file:
             self.json_load = json.load(file)
 
-    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> None:
+    def __call__(self, *args: Any, **kwargs: Any) -> None:
         self.code_exists()
 
     def code_exists(self) -> None:
@@ -119,7 +116,7 @@ class ExportPasswords(AESCryptoMixin):
         self.code = Code()
         super().__init__()
 
-    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> str:
+    def __call__(self, *args: Any, **kwargs: Any) -> str:
         if self.code.code_check():
             file_format = self.file_name.split('.')[1]
             if file_format == 'txt':
@@ -169,7 +166,6 @@ class ExportPasswords(AESCryptoMixin):
             for identifier, password in self.pass_db.list():
                 writer.writerow([identifier, self.decrypt(password)])
 
-    @no_type_check
     def export_excel(self) -> None:
         workbook = openpyxl.Workbook()
         worksheet = workbook.active

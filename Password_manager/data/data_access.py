@@ -4,11 +4,9 @@ from typing import Generator, Optional
 from .errors import IdentifierExistsError
 
 
-def db_provider(data_name: str, data_type: str) -> Optional['PassDB']:
-    if data_type == '.json':
-        return PassDB(data_name=data_name, data_type=data_type)
-    else:
-        return None
+def db_provider(data_name: str, data_type: str) -> 'PassDB':
+    return PassDB(data_name=data_name, data_type=data_type)
+
 
 
 class PassDB:
