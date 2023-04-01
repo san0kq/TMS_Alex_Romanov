@@ -1,6 +1,8 @@
 from collections import OrderedDict
 from time import time
-from typing import Any
+from typing import Any, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .cache_lib import P
 
 
 class MaxSizeMixin:
@@ -19,15 +21,15 @@ class MaxSizeMixin:
 
 class SimpleCache:
     def __init__(self) -> None:
-        self._cache = OrderedDict()
+        self._cache: OrderedDict[tuple[Any, tuple[Any]]] = OrderedDict()
 
-    def cache(self) -> OrderedDict:
+    def cache(self) -> OrderedDict[tuple[Any, tuple[Any]], Any]:
         return self._cache
 
-    def append(self, cache_key: Any, value: Any) -> None:
+    def append(self, cache_key: tuple[Any, tuple[Any]], value: Any) -> None:
         self._cache[cache_key] = value
 
-    def get(self, cache_key: Any) -> Any:
+    def get(self, cache_key: tuple[Any, tuple[Any]]) -> Any:
         return self._cache.get(cache_key)
 
 
@@ -36,7 +38,7 @@ class FIFOCache(SimpleCache, MaxSizeMixin):
         super().__init__()
         self.max_size = max_size
 
-    def append(self, cache_key: Any, value: Any) -> None:
+    def append(self, cache_key: tuple[P.args, tuple[P.kwargs]], value: Any) -> None:
         if len(self._cache) == self.max_size:
             self._cache.pop(next(iter(self._cache)))
         self._cache[cache_key] = value
@@ -47,12 +49,12 @@ class LRUCache(SimpleCache, MaxSizeMixin):
         super().__init__()
         self.max_size = max_size
 
-    def append(self, cache_key: Any, value: Any) -> None:
+    def append(self, cache_key: tuple[P.args, tuple[P.kwargs]], value: Any) -> None:
         if len(self._cache) == self.max_size:
             self._cache.pop(next(iter(self._cache)))
         self._cache[cache_key] = value
 
-    def get(self, cache_key: Any) -> Any:
+    def get(self, cache_key: tuple[P.args, tuple[P.kwargs]]) -> Any:
         self._cache.move_to_end(cache_key)
         return self._cache.get(cache_key)
 
@@ -75,7 +77,7 @@ class TTLCache(SimpleCache, MaxSizeMixin):
             raise ValueError('ttl must be in range (5-86400).')
         self._ttl = value
 
-    def append(self, cache_key: Any, value: Any) -> None:
+    def append(self, cache_key: tuple[P.args, tuple[P.kwargs]], value: Any) -> None:
         if len(self._cache) == self.max_size:
             for key in list(self._cache.keys()):
                 if time() - self._cache[key][1] >= self.ttl:
@@ -84,7 +86,7 @@ class TTLCache(SimpleCache, MaxSizeMixin):
             self._cache.pop(next(iter(self._cache)))
         self._cache[cache_key] = (value, time())
 
-    def get(self, cache_key: Any) -> Any:
+    def get(self, cache_key: tuple[P.args, tuple[P.kwargs]]) -> Any:
         self._cache.move_to_end(cache_key)
         self._cache[cache_key][1] = time()
         return self._cache.get(cache_key)[0]
