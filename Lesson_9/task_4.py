@@ -8,7 +8,7 @@ from math import sqrt
 
 
 def distance(*args: tuple[int, int]) -> float:
-    result = 0
+    result: float = 0
     for index in range(1, len(args)):
         length = sqrt((args[index][0] - args[index - 1][0])**2
                       + (args[index][1] - args[index - 1][1])**2)

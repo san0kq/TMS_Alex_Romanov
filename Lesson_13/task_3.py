@@ -30,7 +30,7 @@ class IncorrectDataError(Exception):
 
 
 class LinkedListIterator:
-    def __init__(self, head: 'Element') -> None:
+    def __init__(self, head: Optional['Element']) -> None:
         self._head = head
 
     def __next__(self) -> Optional[int]:
@@ -43,7 +43,7 @@ class LinkedListIterator:
 
 class LinkedList:
     def __init__(self) -> None:
-        self._head = None
+        self._head: Optional['Element'] = None
 
     def __len__(self) -> int:
         count = 0
@@ -67,7 +67,7 @@ class LinkedList:
             current_element.next = new_element
 
     def reverse(self) -> None:
-        previous_element = None
+        previous_element: Any = None
         current_element = self._head
         while current_element:
             next_element = current_element.next
@@ -91,10 +91,10 @@ class Element:
         self._next = None
         self.data = data
 
-    def __eq__(self, other: Any) -> bool:
-        return self._data < other
+    def __eq__(self, other: object) -> bool:
+        return self._data == other
 
-    def __lt__(self, other: Any) -> bool:
+    def __lt__(self, other: 'Element' | int) -> bool:
         return self._data < other
 
     def __str__(self) -> str:
@@ -112,7 +112,7 @@ class Element:
         self._data = data
 
     @property
-    def next(self) -> 'Element':
+    def next(self) -> Optional['Element']:
         return self._next
 
     @next.setter

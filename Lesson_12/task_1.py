@@ -6,39 +6,43 @@
 А также между объектами этого класса должны поддерживаться операции
 >, <, >=, <=, ==, !=
 """
-from typing import Any
+from typing import Any, TypeVar
+
+OtherTypes = TypeVar('OtherTypes', 'Vector', float, int)
+
+
 
 
 class Vector:
     def __init__(self,
-                 point_1: tuple[int, int],
-                 point_2: tuple[int, int]) -> None:
+                 point_1: tuple[float, float],
+                 point_2: tuple[float, float]) -> None:
         self.point_x1 = point_1[0]
         self.point_y1 = point_1[1]
         self.point_x2 = point_2[0]
         self.point_y2 = point_2[1]
 
     def length(self) -> float:
-        result = round(((self.point_x2 - self.point_x1)**2
-                       + (self.point_y2 - self.point_y1)**2)**0.5, 2)
+        result: float = round(((self.point_x2 - self.point_x1)**2
+                              + (self.point_y2 - self.point_y1)**2)**0.5, 2)
         return result
 
-    def __gt__(self, other: Any) -> bool:
+    def __gt__(self, other: OtherTypes) -> bool:
         return self.length() > other
 
-    def __lt__(self, other: Any) -> bool:
+    def __lt__(self, other: OtherTypes) -> bool:
         return self.length() < other
 
-    def __ge__(self, other: Any) -> bool:
+    def __ge__(self, other: OtherTypes) -> bool:
         return self.length() >= other
 
-    def __le__(self, other: Any) -> bool:
+    def __le__(self, other: OtherTypes) -> bool:
         return self.length() <= other
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return self.length() == other
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         return self.length() != other
 
 

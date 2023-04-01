@@ -1,6 +1,6 @@
 from random import randint, choice
 from string import ascii_letters, digits, ascii_uppercase
-from typing import ParamSpec
+from typing import ParamSpec, Any
 
 from .markov_chains import markov_chains
 
@@ -8,7 +8,7 @@ P = ParamSpec('P')
 
 
 class EmailProvider:
-    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> str:
+    def __call__(self, *args: Any, **kwargs: Any) -> str:
         mails = (
             '@gmail.com',
             '@mail.com',
@@ -27,7 +27,7 @@ class EmailProvider:
 
 
 class PhoneProvider:
-    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> str:
+    def __call__(self, *args: Any, **kwargs: Any) -> str:
         operators = (
             '+37533',
             '+37529',
@@ -49,17 +49,17 @@ class PhoneProvider:
 
 
 class BankCardProvider:
-    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> str:
+    def __call__(self, *args: Any, **kwargs: Any) -> str:
         card_number = ''
         for _ in range(15):
             card_number += choice(digits)
         sum_of_digits = 0
-        for index, number in enumerate(card_number):
+        for index, number_str in enumerate(card_number):
             if index % 2 == 0:
-                number = int(number) * 2
+                number = int(number_str) * 2
                 if number > 9:
                     number -= 9
-            sum_of_digits += int(number)
+            sum_of_digits += int(number_str)
 
         if sum_of_digits % 10 == 0:  # add a check digit
             card_number += '0'
@@ -70,7 +70,7 @@ class BankCardProvider:
 
 
 class NameProvider:
-    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> str:
+    def __call__(self, *args: Any, **kwargs: Any) -> str:
         first_name = choice(ascii_uppercase)
         last_name = choice(ascii_uppercase)
         for _ in range(randint(3, 10)):

@@ -24,27 +24,27 @@ P = ParamSpec('P')
 
 
 def cache(cache_time: int = 60
-          ) -> Callable[[Callable[..., RT]], Callable[..., RT]]:
-    def inner(func: Callable[..., RT]) -> Callable[..., RT]:
+          ) -> Callable[[Callable[P, RT]], Callable[P, Any]]:
+    def inner(func: Callable[P, RT]) -> Callable[P, Any]:
+        cache_dict = dict()
         @wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
             cache_key = (args, tuple(kwargs.values()))
-            if cache_key not in wrapper.cache:
-                wrapper.cache[cache_key] = (func(*args, **kwargs), time())
+            if cache_key not in cache_dict:
+                cache_dict[cache_key] = (func(*args, **kwargs), time())
             else:
-                if time() - wrapper.cache[cache_key][1] > cache_time:
-                    wrapper.cache[cache_key] = (func(*args, **kwargs), time())
-            return wrapper.cache[cache_key][0]
-        wrapper.cache = dict()
+                if time() - cache_dict[cache_key][1] > cache_time:
+                    cache_dict[cache_key] = (func(*args, **kwargs), time())
+            return cache_dict[cache_key][0]
         return wrapper
     return inner
 
 
 @cache(30)
-def find_info_by_name(company_name: str) -> list[dict[str, str | float]]:
+def find_info_by_name(company_name: str) -> list[dict[str, Any]]:
     result = []
     for row in database.list():
-        if company_name.lower() in row.get('Name').lower():
+        if company_name.lower() in row['Name'].lower():
             result.append({
                 'Name': row.get('Name'),
                 'Symbol': row.get('Symbol'),
@@ -57,10 +57,10 @@ def find_info_by_name(company_name: str) -> list[dict[str, str | float]]:
 
 
 @cache(30)
-def find_info_by_symbol(company_symbol: str) -> list[dict[str, str | float]]:
+def find_info_by_symbol(company_symbol: str) -> list[dict[str, Any]]:
     result = []
     for row in database.list():
-        if company_symbol.lower() == row.get('Symbol').lower():
+        if company_symbol.lower() == row['Symbol'].lower():
             result.append({
                 'Name': row.get('Name'),
                 'Symbol': row.get('Symbol'),
@@ -76,8 +76,8 @@ def find_info_by_symbol(company_symbol: str) -> list[dict[str, str | float]]:
 def get_all_companies_by_sector(sector: str) -> list[str]:
     result = []
     for row in database.list():
-        if sector.lower() == row.get('Sector').lower():
-            result.append(row.get('Name'))
+        if sector.lower() == row['Sector'].lower():
+            result.append(row['Name'])
 
     return result
 
@@ -85,7 +85,7 @@ def get_all_companies_by_sector(sector: str) -> list[str]:
 def calculate_average_price() -> float:
     result = []
     for row in database.list():
-        result.append(float(row.get('Price')))
+        result.append(float(row['Price']))
 
     return round(mean(result), 2)
 
@@ -93,7 +93,7 @@ def calculate_average_price() -> float:
 def get_top_10_companies() -> list[tuple[str, float]]:
     result = []
     for row in database.list():
-        result.append((row.get('Name'), float(row.get('Price'))))
+        result.append((row['Name'], float(row['Price'])))
 
     result.sort(key=itemgetter(1), reverse=True)
 
@@ -131,7 +131,7 @@ def update_company_name(symbol: str, company_name: str) -> None:
         database.validate_symbol_not_exists(company_symbol=symbol)
         new_data = []
         for row in database.list():
-            if symbol.lower() == row.get('Symbol').lower():
+            if symbol.lower() == row['Symbol'].lower():
                 row['Name'] = company_name
 
             new_data.append(row)
@@ -146,7 +146,7 @@ def delete_company(symbol: str) -> None:
         database.validate_symbol_not_exists(company_symbol=symbol)
         new_data = []
         for row in database.list():
-            if symbol.lower() == row.get('Symbol').lower():
+            if symbol.lower() == row['Symbol'].lower():
                 continue
             new_data.append(row)
         database.update(data=new_data)

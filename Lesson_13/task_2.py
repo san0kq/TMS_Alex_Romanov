@@ -18,7 +18,7 @@ from typing import Any, Optional
 
 class Stack:
     def __init__(self) -> None:
-        self._stack = []
+        self._stack: list[Any] = []
 
     def push(self, element: Any) -> None:
         self._stack.append(element)

@@ -22,7 +22,7 @@ class FakeFactoryIterator:
             counter: int,
             count: int
     ) -> None:
-        self.provider = provider
+        self.provider: Any = provider
         self.counter = counter
         self.count = count
 
@@ -35,7 +35,7 @@ class FakeFactoryIterator:
 
 class FakeFactory:
     def __init__(self, provider: Type[Providers], count: int) -> None:
-        self.provider = provider()
+        self.provider: Any = provider()
         self.count = count
 
     def generate(self) -> Any:

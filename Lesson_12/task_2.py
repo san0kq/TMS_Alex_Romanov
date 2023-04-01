@@ -28,9 +28,11 @@ find_the_biggest_book(self) - возвращает книгу, в которой
 """
 
 from re import search
-from typing import Optional, Any
+from typing import Optional, TypeVar
 
 from errors import EmptyLibraryError
+
+OtherTypes = TypeVar('OtherTypes', 'Book', float, int)
 
 
 class Book:
@@ -64,33 +66,33 @@ class Book:
         else:
             return None
 
-    def __gt__(self, other: Any) -> bool:
+    def __gt__(self, other: OtherTypes) -> bool:
         return self.pages > other
 
-    def __lt__(self, other: Any) -> bool:
+    def __lt__(self, other: OtherTypes) -> bool:
         return self.pages < other
 
-    def __ge__(self, other: Any) -> bool:
+    def __ge__(self, other: OtherTypes) -> bool:
         return self.pages >= other
 
-    def __le__(self, other: Any) -> bool:
+    def __le__(self, other: OtherTypes) -> bool:
         return self.pages <= other
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return self.to_dict() == other
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         return self.to_dict() != other
 
 
 class Library:
     def __init__(self) -> None:
-        self.books = []
+        self.books: list['Book'] = []
 
     def add_book(self, book: Book) -> None:
         self.books.append(book)
 
-    def get_books(self) -> list[dict[str, str | int | float]]:
+    def get_books(self) -> list[dict[str, object]]:
         return [book.to_dict() for book in self.books]
 
     def remove_book(self, book: Book) -> None:
@@ -136,6 +138,9 @@ lib.add_book(book2)
 lib.add_book(book3)
 
 print(len(lib))
-print(lib.find_the_biggest_book().to_dict())
+biggest_book = lib.find_the_biggest_book()
+print(biggest_book)
+if biggest_book is not None:
+    print(biggest_book.to_dict())
 print(lib.get_books())
 print(book3 < book2)

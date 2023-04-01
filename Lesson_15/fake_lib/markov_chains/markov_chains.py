@@ -10,11 +10,11 @@ process such as "Markov chains".
 from .file_utils import get_file_path
 
 
-def generate_tokens(file: str) -> dict[str, list[str]]:
+def generate_tokens(file_name: str) -> dict[str, list[str]]:
     tokens = dict()
-    with open(file) as file:
-        file = file.read().splitlines()
-        for row in file:
+    with open(file_name) as file:
+        data = file.read().splitlines()
+        for row in data:
             for index, letter in enumerate(row):
                 if letter not in tokens and index != len(row)-1:
                     tokens[letter] = [row[index+1]]

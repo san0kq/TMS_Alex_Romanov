@@ -1,13 +1,13 @@
 while True:
-    name = input('Введите ваше имя: ')
-    age = input('Введите ваш возраст '
+    name: str = input('Введите ваше имя: ')
+    age_string: str = input('Введите ваш возраст '
                 '(введите STOP, чтобы остановить программу): ')
 
-    if age == 'STOP':  # Stopping code execution
+    if age_string == 'STOP':  # Stopping code execution
         break
 
     try:
-        age = int(age)
+        age: int = int(age_string)
         if age <= 0:
             print('Ошибка, повторите ввод')
         elif age < 10:

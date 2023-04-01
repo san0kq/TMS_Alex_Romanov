@@ -1,6 +1,8 @@
-list_1 = [1, 2, 3, 4, 5]
-list_2 = list('new_list')
-list_3 = 'List 3'.split()
+from typing import Any
+
+list_1: list[int] = [1, 2, 3, 4, 5]
+list_2: Any = list('new_list')
+list_3: list[str] = 'List 3'.split()
 
 print(list_1)
 print(list_2)

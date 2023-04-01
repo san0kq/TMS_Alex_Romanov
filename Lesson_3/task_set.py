@@ -1,5 +1,7 @@
-set_1 = set('Hello World')
-set_2 = {1, 2, 3, 3, 4, 5, 6}
+from typing import Any
+
+set_1: set[str | int] = set('Hello World')
+set_2: set[int] = {1, 2, 3, 3, 4, 5, 6}
 
 print(set_1)
 print(set_2)

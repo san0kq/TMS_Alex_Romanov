@@ -1,12 +1,12 @@
 from time import time
 from functools import wraps
-from typing import Callable, ParamSpec, TypeVar
+from typing import Callable, ParamSpec, TypeVar, Any
 
 RT = TypeVar('RT')
 P = ParamSpec('P')
 
 
-def measure_execution_time(func: Callable[..., RT]) -> Callable[..., RT]:
+def measure_execution_time(func: Callable[P, RT]) -> Callable[P, RT]:
     """Decorator to measure execution time"""
     @wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> RT:
@@ -34,9 +34,9 @@ def factorial(n: int) -> int:
 
 
 @measure_execution_time
-def reverse_measure(func: Callable[..., RT],
-                    *args: P.args,
-                    **kwargs: P.kwargs) -> RT:
+def reverse_measure(func: Callable[P, RT],
+                    *args: Any,
+                    **kwargs: Any) -> RT:
     """This function is needed to measure execution
     time of recursive function"""
     return func(*args, **kwargs)

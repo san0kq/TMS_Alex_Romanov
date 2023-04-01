@@ -5,11 +5,11 @@
 
 """
 
-string = b'r\xc3\xa9sum\xc3\xa9'
+string: bytes = b'r\xc3\xa9sum\xc3\xa9'
 print(string)
-string = string.decode('utf-8')
-print(string)
-string = string.encode('Latin1')
-print(string)
-string = string.decode('Latin1')
-print(string)
+string2: str = string.decode('utf-8')
+print(string2)
+string3: bytes = string2.encode('Latin1')
+print(string3)
+string4: str = string3.decode('Latin1')
+print(string4)
