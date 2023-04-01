@@ -6,5 +6,9 @@
   "Car": [
     "Model",
     "Year"
+  ],
+  "Computer": [
+    "Model",
+    "Year"
   ]
 }

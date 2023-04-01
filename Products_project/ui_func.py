@@ -12,7 +12,9 @@ choices = '1. Add a new category\n2. Add a new product\n3. Delete a product' \
           'Your choice: '
 
 
-def main():
+def main() -> None:
+    category = Category()
+    product = Product()
     while True:
         try:
             choice = input(choices)
@@ -25,12 +27,12 @@ def main():
         if choice == '1':
             category_name = input('Enter the category name: ').strip()
             try:
-                new_category = Category(category_name=category_name)
+                category.category_name = category_name
                 print('Please enter the required parameters one by one. '
                       'The maximum number of parameters in one category is 10.'
                       ' If you have finished entering the parameters, '
                       'enter "stop".')
-                new_category()
+                category()
             except NamingError as err:
                 print(err, file=stderr)
                 sleep(0.5)
@@ -39,20 +41,17 @@ def main():
         elif choice == '2':
             print('Enter the name of the category from the options below:')
             print('------------------------------------------------------')
-            categories = Category()
-            print(categories.categories_read())
+            print(category.categories_read())
             print('------------------------------------------------------')
             category_name = input()
             product_name = input('Enter a product name: ')
             quantity = input('Enter the quantity of the product: ')
             price = input('Enter the price of the product: ')
             try:
-                product = Product(
-                    product_name=product_name,
-                    category_name=category_name,
-                    quantity=quantity,
-                    price=price
-                )
+                product.product_name = product_name
+                product.category_name = category_name
+                product.quantity = quantity
+                product.price = price
             except NamingError as err:
                 print(err, file=stderr)
                 sleep(0.5)
@@ -71,17 +70,13 @@ def main():
         elif choice == '3':
             product_id = input('Enter the ID of the product you want to '
                                'delete: ')
-            product = Product()
             product.delete_product(product_id=product_id)
 
         elif choice == '4':
             product_category = input('Enter the category of products you '
                                      'are interested in: ')
             try:
-                if product_category != '':
-                    product = Product(category_name=product_category)
-                else:
-                    product = Product()
+                product.category_name = product_category
 
                 min_date = input('Enter the minimum date of product addition '
                                  '(YYYY-MM-DD): ')
@@ -104,7 +99,6 @@ def main():
         elif choice == '5':
             product_id = input('Enter the ID of the product you want '
                                'to retrieve: ')
-            product = Product()
             try:
                 print(product.get_product(product_id=product_id))
             except ValueError as err:
@@ -129,7 +123,6 @@ def main():
                         break
                     validate_quantity(quantity=quantity)
                     products_id[product_id] = int(quantity)
-                product = Product()
                 print(product.products_order(products_id=products_id))
             except ValueError as err:
                 print(err, file=stderr)

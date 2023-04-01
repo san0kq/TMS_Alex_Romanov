@@ -1,6 +1,10 @@
 from datetime import datetime
 from sys import stderr
 from time import sleep
+from typing import Optional, Any, Iterable, TYPE_CHECKING
+if TYPE_CHECKING:
+    from data.data_access import GeneratorTypes
+
 import openpyxl
 
 from data import (
@@ -56,22 +60,21 @@ class FilterMixin:
 
 
 class Category:
-    def __init__(self, category_name: str | None = None) -> None:
-        self.category_name = category_name
-        self.parameters = list()
+    def __init__(self) -> None:
+        self.parameters: list[str] = list()
         self.category_db = category_db
 
-    def __call__(self, *args, **kwargs) -> None:
+    def __call__(self, *args: Any, **kwargs: Any) -> None:
         self.get_parameters()
         self.add_new_category()
 
     @property
-    def category_name(self) -> str | None:
+    def category_name(self) -> str:
         return self._category_name
 
     @category_name.setter
-    def category_name(self, value: str | None) -> None:
-        if value is not None:
+    def category_name(self, value: str) -> None:
+        if value != '':
             validate_category_name(category_name=value)
         self._category_name = value
 
@@ -95,64 +98,48 @@ class Category:
         categories = [category for category in self.category_db.read()]
         return '\n'.join(categories)
 
-    def parameters_read(self, category_name: str) -> list:
-        parameters = self.category_db.read_all()[category_name]
+    def parameters_read(self, category_name: str) -> list[str]:
+        parameters: list[str] = self.category_db.read_all()[category_name]
         return parameters
 
 
 class Product(Category, FilterMixin):
-    def __init__(
-            self,
-            product_name: str | None = None,
-            category_name: str | None = None,
-            quantity: str | None = None,
-            price: str | None = None
-    ) -> None:
-        self.product_name = product_name
-        super().__init__(category_name=category_name)
-        self.quantity = quantity
-        self.price = price
+    def __init__(self) -> None:
+        super().__init__()
         self.products_db = products_db
         self.orders_db = orders_db
-        self.parameters = dict()
+        self.parameters_dict: dict[str, Any] = dict()
 
-    def __call__(self, *args, **kwargs) -> None:
+    def __call__(self, *args: Any, **kwargs: Any) -> None:
         self.get_parameters_value()
         self.add_product()
 
     @property
-    def product_name(self) -> str | None:
+    def product_name(self) -> str:
         return self._product_name
 
     @product_name.setter
-    def product_name(self, value: str | None) -> None:
-        if value is not None:
-            validate_product_name(product_name=value)
+    def product_name(self, value: str) -> None:
+        validate_product_name(product_name=value)
         self._product_name = value
 
     @property
-    def quantity(self) -> int | None:
+    def quantity(self) -> int:
         return self._quantity
 
     @quantity.setter
-    def quantity(self, value: str | None) -> None:
-        if value is not None:
-            validate_quantity(quantity=value)
-            self._quantity = int(value)
-        else:
-            self._quantity = value
+    def quantity(self, value: str) -> None:
+        validate_quantity(quantity=value)
+        self._quantity = int(value)
 
     @property
-    def price(self) -> float | None:
+    def price(self) -> float:
         return self._price
 
     @price.setter
-    def price(self, value: str | None) -> None:
-        if value is not None:
-            validate_price(price=value)
-            self._price = float(value)
-        else:
-            self._price = value
+    def price(self, value: str) -> None:
+        validate_price(price=value)
+        self._price = float(value)
 
     def get_parameters_value(self) -> None:
         validate_category_exists(category_name=self.category_name,
@@ -162,14 +149,14 @@ class Product(Category, FilterMixin):
             parameter_value = input(f'Enter a value for the '
                                     f'{parameter} parameter: ')
             validate_parameter_value(parameter=parameter_value)
-            self.parameters[parameter] = parameter_value
+            self.parameters_dict[parameter] = parameter_value
 
     def add_product(self) -> None:
-        record = {
+        record: dict[str, Any] = {
             'name': self.product_name,
             'category': self.category_name,
         }
-        record.update(self.parameters)
+        record.update(self.parameters_dict)
         record.update(
             {
                 'quantity': self.quantity,
@@ -196,6 +183,7 @@ class Product(Category, FilterMixin):
         validate_date(min_date)
         validate_date(max_date)
         result = ''
+        product: tuple[str, dict[str, Any]]
         for product in self.products_db.read():
             if self.category_filter(
                     param=self.category_name,
@@ -225,12 +213,12 @@ class Product(Category, FilterMixin):
             sleep(0.5)
             return "You can't buy it."
 
-    def products_order(self, products_id: dict) -> str:
+    def products_order(self, products_id: dict[str, Any]) -> str:
         order = 'Your order:\n'
         total_price = 0.0
         products = self.products_db.read_all()['Goods']
         data_update = dict()
-        order_dict = {
+        order_dict: dict[str, Any] = {
             'Product list': dict(),
             'Total price': 0.0,
             'Created_at': str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
@@ -292,7 +280,7 @@ class CreateStatistics(FilterMixin):
         self.categories = {category: [0, 0] for category in category_db.read()}
         self.products = {params["name"]: 0 for product_id, params in
                          products_db.read()}
-        self.orders = dict()
+        self.orders: dict[str, Any] = dict()
         self.metrics = {
             'Total revenue': 0,
             'Total quantity': 0,
@@ -300,7 +288,7 @@ class CreateStatistics(FilterMixin):
             'Popular product': '-',
         }
 
-    def __call__(self, *args, **kwargs) -> None:
+    def __call__(self, *args: Any, **kwargs: Any) -> None:
         self.update_statistics()
         self.create_sheet_category()
         self.create_sheet_products()
