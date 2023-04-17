@@ -138,10 +138,10 @@ class DBPopulate(DBConnector):
     def authors(self) -> None:
         first_name = RandGen(RandFirstName).generate(randint(3, 10))
         last_name = RandGen(RandLastName).generate(randint(3, 15))
-        birth_date = datetime.datetime.fromtimestamp(
-            randint(-2208988800, 946684800)).strftime('%Y-%m-%d %H:%M:%S')
-        death_date = datetime.datetime.fromtimestamp(
-            randint(-2208988800, 946684800)).strftime('%Y-%m-%d %H:%M:%S')
+        birth_date = datetime.date(1900, 1, 1) + datetime.timedelta(
+            days=randint(0, 36524))
+        death_date = datetime.date(2000, 1, 1) + datetime.timedelta(
+            days=randint(0, 8401))
         information = RandGen(RandWord).generate(randint(10, 20))
         self.cursor.execute('INSERT INTO authors('
                             'first_name,'
