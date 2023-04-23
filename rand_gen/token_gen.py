@@ -1,6 +1,14 @@
 from typing import TypeVar, Type, Optional
 
-from .providers import RandFirstName, RandLastName, RandEmail, RandWord
+from .providers import (
+    RandFirstName,
+    RandLastName,
+    RandEmail,
+    RandWord,
+    RandText,
+    RandPhone,
+    RandBankCard,
+)
 
 Providers = TypeVar(
     'Providers',
@@ -8,6 +16,9 @@ Providers = TypeVar(
     RandLastName,
     RandEmail,
     RandWord,
+    RandText,
+    RandPhone,
+    RandBankCard,
 )
 
 
@@ -24,7 +35,5 @@ class RandGen:
                              ' RandWord)')
         self.provider = provider()
 
-    def generate(self, lenght: Optional[int] = None) -> str:
-        if lenght or lenght == 0:
-            return self.provider.generate(lenght=lenght)
-        return self.provider.generate()
+    def generate(self, length: Optional[int] = None) -> str:
+        return self.provider.generate(length=length)
