@@ -26,7 +26,7 @@ class AbstractBase(ABC):
                     rand_token = choice(list(filter(lambda x: x[1] == ' ',
                                                     self._tokens[
                                                         rand_value[-2:]
-                                                    ])))
+                    ])))
 
             rand_value += rand_token
         return rand_value[:length]
