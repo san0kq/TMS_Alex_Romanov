@@ -12,7 +12,7 @@ class SqliteGateway:
         self.cursor = self._create_cursor()
 
     def _create_connection(self) -> Connection:
-        return sqlite3.connect(f'file:{self._db_name}?mode=rw', uri=True)
+        return sqlite3.connect(f'file:data/{self._db_name}?mode=rw', uri=True)
 
     def _create_cursor(self) -> Cursor:
         return self.connection.cursor()

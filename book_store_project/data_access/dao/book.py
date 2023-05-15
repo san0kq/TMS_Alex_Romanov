@@ -21,3 +21,17 @@ class BookDAO(BaseDAO):
     def get_ids_list(self) -> list[int]:
         result = self._db_gateway.cursor.execute('SELECT id FROM books;')
         return result.fetchall()
+    
+    def list(self) -> list[str]:
+        result = self._db_gateway.cursor.execute('SELECT '
+                                                 'book.id, '
+                                                 'first_name, '
+                                                 'last_name, '
+                                                 'email, '
+                                                 'registered_at FROM '
+                                                 'users JOIN profiles ON '
+                                                 'profile_id = profiles.id '
+                                                 'ORDER BY first_name, '
+                                                 'last_name;')
+
+        return result.fetchall()

@@ -1,6 +1,9 @@
 import sys
 import os
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
 from providers import RandomValueFromListProvider, gateway_provider
 from validators import (
     db_name_validator, 
@@ -48,10 +51,6 @@ from rand_gen import (
     RandBankCard,
 )
 from populate_table_command import PopulateTable
-
-
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 AVAILABLE_FLAGS = ('-d', '-n')
 
