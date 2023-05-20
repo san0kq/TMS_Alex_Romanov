@@ -51,7 +51,7 @@ class UserDAO(BaseDAO):
     def get_ids_list(self) -> list[int]:
         result = self._db_gateway.cursor.execute('SELECT id FROM users;')
         return result.fetchall()
-    
+
     def list(self) -> list[str]:
         result = self._db_gateway.cursor.execute('SELECT '
                                                  'users.id, '
@@ -65,12 +65,11 @@ class UserDAO(BaseDAO):
                                                  'last_name;')
 
         return result.fetchall()
-    
+
     def user_info(self, user_id: int) -> tuple[list[str], list[str]]:
-        print(self.get_ids_list())
         if user_id not in [id[0] for id in self.get_ids_list()]:
             raise RecordExistsError(f'User with ID {user_id} does not exist.')
-        user_result = self._db_gateway.cursor.execute('SELECT ' 
+        user_result = self._db_gateway.cursor.execute('SELECT '
                                                       'users.id, '
                                                       'first_name, '
                                                       'last_name, '
@@ -84,20 +83,20 @@ class UserDAO(BaseDAO):
                                                       'WHERE users.id = ?;',
                                                       (user_id, ))
         user_result = user_result.fetchall()
-        
-        roles_result = self._db_gateway.cursor.execute('SELECT roles.name ' 
-                                                       'FROM users_roles JOIN ' 
+
+        roles_result = self._db_gateway.cursor.execute('SELECT roles.name '
+                                                       'FROM users_roles JOIN '
                                                        'users ON user_id = '
                                                        'users.id  '
                                                        'JOIN roles ON '
                                                        'role_id = '
                                                        'roles.id '
-                                                       'WHERE users.id = ?;', 
+                                                       'WHERE users.id = ?;',
                                                        (user_id, ))
         roles_result = roles_result.fetchall()
-        
+
         return user_result, roles_result
-    
+
     def delete(self, user_id: int) -> None:
         if user_id not in [id[0] for id in self.get_ids_list()]:
             raise RecordExistsError(f'User with ID {user_id} does not exist.')
@@ -111,5 +110,12 @@ class UserDAO(BaseDAO):
         self._db_gateway.cursor.execute(
             f'UPDATE profiles SET {column} = ? WHERE id = ?',
             (value, user_id)
-            )
+        )
         self._db_gateway.connection.commit()
+
+    def email_exist(self, email: str) -> None:
+        self._db_gateway.cursor.execute('SELECT * FROM profiles WHERE '
+                                        'email = ?', (email, ))
+        if self._db_gateway.cursor.fetchall():
+            raise RecordExistsError(f'The email address {email} '
+                                    f'already exists.')

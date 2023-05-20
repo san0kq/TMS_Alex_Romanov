@@ -7,3 +7,6 @@ class BookDTO:
     price: float
     description: str
     pages: int
+    format_id: int
+    age_limit: int
+    count: int

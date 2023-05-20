@@ -24,6 +24,7 @@ from data_access.dao import (
     BookBasketDAO,
     BookAuthorDAO,
     BookGenreDAO,
+    FormatDAO,
 )
 from factories import (
     UserFactory,
@@ -39,6 +40,7 @@ from factories import (
     BookBasketFactory,
     BookAuthorFactory,
     BookGenreFactory,
+    FormatFactory,
 )
 from rand_gen import (
     RandGen,
@@ -104,10 +106,20 @@ if __name__ == '__main__':
         fake_factory=permission_factory
     ).execute()
 
+    format_dao = FormatDAO(db_gateway=db_gateway)
+    format_factory = FormatFactory(name_provider=RandGen(RandWord))
+    PopulateTable(
+        records_number=records_number,
+        dao=format_dao,
+        fake_factory=format_factory
+    ).execute()
+
     book_dao = BookDAO(db_gateway=db_gateway)
+    formats_list = format_dao.get_ids_list()
     book_factory = BookFactory(
         name_provider=RandGen(RandWord),
-        description=RandGen(RandText)
+        description_provider=RandGen(RandText),
+        format_id_provider=RandomValueFromListProvider(formats_list)
     )
     PopulateTable(
         records_number=records_number,

@@ -11,8 +11,9 @@ from .role_permission import RolePermissionDTO
 from .book_basket import BookBasketDTO
 from .book_author import BookAuthorDTO
 from .book_genre import BookGenreDTO
+from .format import FormatDTO
 
 __all__ = ['UserDTO', 'ProfileDTO', 'RoleDTO', 'PermissionDTO', 'BookDTO',
            'BasketDTO', 'BankCardDTO', 'AuthorDTO', 'GenreDTO', 'AdressDTO',
            'TransactionDTO', 'UserRoleDTO', 'RolePermissionDTO',
-           'BookBasketDTO', 'BookAuthorDTO', 'BookGenreDTO']
+           'BookBasketDTO', 'BookAuthorDTO', 'BookGenreDTO', 'FormatDTO']

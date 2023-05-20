@@ -11,8 +11,10 @@ from .role_permission import RolePermissionFactory
 from .book_basket import BookBasketFactory
 from .book_author import BookAuthorFactory
 from .book_genre import BookGenreFactory
+from .format import FormatFactory
 
 __all__ = ['UserFactory', 'RoleFactory', 'PermissionFactory',
            'BookFactory', 'AuthorFactory', 'GenreFactory', 'AdressFactory',
            'TransactionFactory', 'UserRoleFactory', 'RolePermissionFactory',
-           'BookBasketFactory', 'BookAuthorFactory', 'BookGenreFactory']
+           'BookBasketFactory', 'BookAuthorFactory', 'BookGenreFactory',
+           'FormatFactory']

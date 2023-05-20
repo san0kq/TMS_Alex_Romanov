@@ -11,8 +11,9 @@ from .role_permission import RolePermissionDAO
 from .book_basket import BookBasketDAO
 from .book_author import BookAuthorDAO
 from .book_genre import BookGenreDAO
+from .format import FormatDAO
 
 __all__ = ['UserDAO', 'RoleDAO', 'PermissionDAO', 'BookDAO',
            'AuthorDAO', 'GenreDAO', 'AdressDAO', 'TransactionDAO',
            'UserRoleDAO', 'RolePermissionDAO', 'BookBasketDAO',
-           'BookAuthorDAO', 'BookGenreDAO']
+           'BookAuthorDAO', 'BookGenreDAO', 'FormatDAO']
