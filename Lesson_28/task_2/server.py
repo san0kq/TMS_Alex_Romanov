@@ -24,12 +24,12 @@ while True:
     result = b''
     while True:
         data = conn.recv(1024)
-        if data.decode()[-1] == '#':
-            result += data[:-1]
+        if not data:
             print(f'Connection closed: {addr[0]}:{addr[1]}')
             break
         result += data
 
     word = most_popular_word(text=result.decode())
     conn.send(word.encode())
+    conn.shutdown(socket.SHUT_WR)
     conn.close()
