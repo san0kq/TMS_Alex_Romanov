@@ -23,8 +23,7 @@ def post(data: str) -> bytes:
         except Exception:
             return (HDRS_400 + 'Database operation error').encode()
     else:
-        if data['action'][0] == 'update':
-            
+        if data['action'][0] == 'Update':
             try:
                 cursor.execute('UPDATE companies SET '
                             'name = ?, '
@@ -55,7 +54,7 @@ def post(data: str) -> bytes:
             except Exception:
                 return (HDRS_400 + 'Database operation error').encode()
 
-        elif data['action'][0] == 'create':
+        elif data['action'][0] == 'Create':
             try:
                 cursor.execute('INSERT INTO companies ('
                                'name, symbol, sector, price, price_earnings, '
