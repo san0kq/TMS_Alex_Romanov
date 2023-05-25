@@ -10,7 +10,8 @@
         margin-bottom: 20px;
         border-radius: 5px;
       }
-      .company-form label {
+      .company-form label,
+      .radio {
         display: block;
         margin-bottom: 10px;
         font-weight: bold;
@@ -42,19 +43,36 @@
   <body>
     <div class="company-form">
       <h2>Edit company information</h2>
+      <h3>If you want to add a new company, select the corresponding item and enter the company's information (symbol and name must be unique).<br> 
+        If you want to update a company's information, select the corresponding item and enter the symbol of the existing company.</h3>
       
       <form method="post" action="/update-company">
+        <input type="radio" name="action" value="create">Add new company<br>
+        <input type="radio" name="action" value="update">Edit company<br>
+        <br>
+        <br>
         <label for="symbol">Symbol:</label>
         <input type="text" id="symbol" name="symbol" value="">
-        <h3>Enter the symbol of the company that you want to modify from the existing list</h3>
 
         <label for="name">Company name:</label>
         <input type="text" id="name" name="name" value="">
 
 
         <label for="sector">Sector:</label>
-        <input type="text" id="sector" name="sector" value="">
 
+        <select id="sector" name="sector">
+          <option>Industrials</option>
+          <option>Health Care</option>
+          <option>Information Technology</option>
+          <option>Consumer Discretionary</option>
+          <option>Utilities</option>
+          <option>Financials</option>
+          <option>Materials</option>
+          <option>Real Estate</option>
+          <option>Consumer Staples</option>
+          <option>Energy</option>
+          <option>Telecommunication Services</option>
+        </select>
 
         <label for="price">Price:</label>
         <input type="text" id="price" name="price" value="">

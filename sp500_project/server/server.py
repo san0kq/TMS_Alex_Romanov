@@ -12,7 +12,8 @@ server.listen()
 
 def find_page(request_data: str) -> bytes:
     HDRS = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n '
-    HDRS_404 = 'HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\n\r\n '
+    HDRS_404 = ('HTTP/1.1 404 Not Found\r\nContent-Type: text/html; '
+                'charset=utf-8\r\n\r\n ')
     try:
         page = request_data.split(' ')[1]
         return HDRS.encode() + get(page=page[1::])
@@ -23,7 +24,6 @@ def find_page(request_data: str) -> bytes:
 while True:
     conn, addr = server.accept()
     request_data = conn.recv(4096).decode()
-    print(request_data)
     if request_data.split(' ')[0] == 'POST':
         conn.send(post(request_data.split('\r\n\r\n')[-1]))
     else:
