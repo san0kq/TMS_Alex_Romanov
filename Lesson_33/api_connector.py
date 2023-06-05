@@ -3,6 +3,7 @@ from decouple import config
 
 from dto import WeatherDTO
 
+
 class WeatherAPIConnector:
     def __init__(self) -> None:
         self._APPID = config('APPID')
