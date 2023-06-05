@@ -1,44 +1,29 @@
-import requests
-from prettytable import PrettyTable
-from decouple import config
+from api_connector import WeatherAPIConnector
+from weather_table import WeatherTable
 
 
-weather_table = PrettyTable()
-weather_table.field_names = ['city', 'temp', 'description', 'humidity']
+def get_weather() -> None:
+    connector = WeatherAPIConnector()
+    weather_table = WeatherTable()
 
 
-APPID = config('APPID')
-intro = ('Enter the name of the city. If you have finished '
-         'entering or want to exit the program, enter "stop".')
+    intro = ('Enter the name of the city. If you have finished '
+            'entering or want to exit the program, enter "stop".')
 
-print(intro)
 
-while True:
-    city_name = input('Enter: ')
-    if city_name == 'stop':
-        break
+    print(intro)
 
-    params = {
-        'q': city_name,
-        'appid': APPID,
-        'units': 'metric'
-    }
-    try:
-        r = requests.get('https://api.openweathermap.org/data/2.5/weather', 
-                        params=params)
-        if r.status_code != 200:
+    while True:
+        city_name = input('Enter: ')
+        if city_name == 'stop':
+            break
+
+        try:
+            data = connector.get(param=city_name)
+            weather_table.add_row(data=data)
+        except Exception:
             print('You have entered a nonexistent city or made some mistake. '
-                  'Please try again.')
+                'Please try again.')
             continue
-        r = r.json()
-        weather_table.add_row([
-            r['name'],
-            r['main']['temp'],
-            r['weather'][0]['description'],
-            r['main']['humidity']
-        ])
-    except Exception:
-        print('Connection error.')
-        continue
 
-print(weather_table)
+    weather_table.table_read()
