@@ -15,7 +15,7 @@ class WeatherAPIConnector:
 
     def get(self, param: str) -> WeatherDTO:
         request = self._session.get(
-            'https://api.openweathermap.org/data/2.5/weather', 
+            'https://api.openweathermap.org/data/2.5/weather',
             params={'q': param}
         )
         data = request.json()

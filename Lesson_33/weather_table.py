@@ -12,9 +12,9 @@ class WeatherTable:
         self._set_columns()
 
     def _set_columns(self) -> None:
-        self._weather_table.field_names = ['city', 'temp', 'description', 
+        self._weather_table.field_names = ['city', 'temp', 'description',
                                            'humidity']
-    
+
     def add_row(self, data: WeatherDTO) -> None:
         self._weather_table.add_row([data.city, data.temp,
                                      data.desctription, data.humidity])

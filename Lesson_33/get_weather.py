@@ -6,10 +6,8 @@ def get_weather() -> None:
     connector = WeatherAPIConnector()
     weather_table = WeatherTable()
 
-
     intro = ('Enter the name of the city. If you have finished '
-            'entering or want to exit the program, enter "stop".')
-
+             'entering or want to exit the program, enter "stop".')
 
     print(intro)
 
@@ -23,7 +21,7 @@ def get_weather() -> None:
             weather_table.add_row(data=data)
         except Exception:
             print('You have entered a nonexistent city or made some mistake. '
-                'Please try again.')
+                  'Please try again.')
             continue
 
     weather_table.table_read()
