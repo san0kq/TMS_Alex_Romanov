@@ -1,2 +1,2 @@
 DATABASE_NAME = 'data/sp500'
-DATABASE_TYPE = '.json'
+DATABASE_TYPE = '.db'

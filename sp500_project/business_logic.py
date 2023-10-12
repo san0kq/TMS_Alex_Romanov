@@ -1,10 +1,11 @@
 from functools import wraps
 from operator import itemgetter
 from statistics import mean
-from random import randint, uniform
+from random import randint, uniform, choice
 from sys import stderr
 from time import sleep, time
 from typing import Callable, TypeVar, ParamSpec, Any
+from string import ascii_uppercase
 
 from faker import Faker
 
@@ -42,61 +43,27 @@ def cache(cache_time: int = 60
 
 @cache(30)
 def find_info_by_name(company_name: str) -> list[dict[str, Any]]:
-    result = []
-    for row in database.list():
-        if company_name.lower() in row['Name'].lower():
-            result.append({
-                'Name': row.get('Name'),
-                'Symbol': row.get('Symbol'),
-                'Sector': row.get('Sector'),
-                'Stock price': row.get('Price'),
-            }
-            )
-
-    return result
+    return database.read(value=company_name, key='Name')
 
 
 @cache(30)
 def find_info_by_symbol(company_symbol: str) -> list[dict[str, Any]]:
-    result = []
-    for row in database.list():
-        if company_symbol.lower() == row['Symbol'].lower():
-            result.append({
-                'Name': row.get('Name'),
-                'Symbol': row.get('Symbol'),
-                'Sector': row.get('Sector'),
-                'Stock price': row.get('Price'),
-            }
-            )
-
-    return result
+    return database.read(value=company_symbol, key='Symbol')
 
 
 @cache(30)
 def get_all_companies_by_sector(sector: str) -> list[str]:
-    result = []
-    for row in database.list():
-        if sector.lower() == row['Sector'].lower():
-            result.append(row['Name'])
-
-    return result
+    return database.read(value=sector, key='Sector')
 
 
 def calculate_average_price() -> float:
-    result = []
-    for row in database.list():
-        result.append(float(row['Price']))
-
-    return round(mean(result), 2)
+    data = [x[1] for x in database.read(key='Price')]
+    return round(mean(data), 2)
 
 
 def get_top_10_companies() -> list[tuple[str, float]]:
-    result = []
-    for row in database.list():
-        result.append((row['Name'], float(row['Price'])))
-
+    result = database.read(key='Price')
     result.sort(key=itemgetter(1), reverse=True)
-
     return result[:10]
 
 
@@ -129,13 +96,7 @@ def add_new_company(symbol: str,
 def update_company_name(symbol: str, company_name: str) -> None:
     try:
         database.validate_symbol_not_exists(company_symbol=symbol)
-        new_data = []
-        for row in database.list():
-            if symbol.lower() == row['Symbol'].lower():
-                row['Name'] = company_name
-
-            new_data.append(row)
-        database.update(data=new_data)
+        database.update(symbol=symbol, company_name=company_name)
     except SymbolExistsError as err:
         print(err, file=stderr)
         sleep(0.5)
@@ -144,23 +105,20 @@ def update_company_name(symbol: str, company_name: str) -> None:
 def delete_company(symbol: str) -> None:
     try:
         database.validate_symbol_not_exists(company_symbol=symbol)
-        new_data = []
-        for row in database.list():
-            if symbol.lower() == row['Symbol'].lower():
-                continue
-            new_data.append(row)
-        database.update(data=new_data)
+        database.delete(symbol=symbol)
     except SymbolExistsError as err:
         print(err, file=stderr)
         sleep(0.5)
 
 
 def truncate_all() -> str:
-    return database.delete()
+    return database.truncate()
 
 
 def populate_file_random(records_number: str) -> None:
     new_data = []
+    unique_symbol_check = []
+    unique_company_check = []
     sectors = ['Consumer Discretionary', 'Consumer Staples', 'Energy',
                'Financials', 'Materials', 'Telecommunication Services',
                'Real Estate', 'Industrials', 'Utilities', 'Health Care',
@@ -168,12 +126,29 @@ def populate_file_random(records_number: str) -> None:
 
     fake = Faker()
     for _ in range(int(records_number)):
+        while True:
+            symbol = ''.join([choice(ascii_uppercase) for _ in
+                              range(randint(3, 6))])
+            if symbol not in unique_symbol_check:
+                break
+        while True:
+            company_name = fake.company()
+            if company_name not in unique_company_check:
+                break
+
         row = {
-            'Symbol': fake.suffix(),
-            'Name': fake.company(),
+            'Symbol': symbol,
+            'Name': company_name,
             'Sector': sectors[randint(0, 10)],
             'Price': round(uniform(0, 1000), 2),
         }
+        unique_symbol_check.append(symbol)
+        unique_company_check.append(company_name)
+
         new_data.append(row)
 
-    database.update(data=new_data, rest_value='None')
+    database.populate(data=new_data)
+
+
+def close_db() -> None:
+    database.close()

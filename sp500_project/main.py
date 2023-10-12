@@ -18,6 +18,7 @@ from business_logic import (
     delete_company,
     truncate_all,
     populate_file_random,
+    close_db,
 )
 from validators import (
     validate_user_choice,
@@ -133,5 +134,6 @@ while True:
             continue
 
     elif choice == '11':
+        close_db()
         print('GOODBYE')
         break
