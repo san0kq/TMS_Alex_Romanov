@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Edit company information</title>
+    <style>
+      .company-form {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      }
+      .company-form label,
+      .radio {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      .company-form input[type="text"],
+      .company-form textarea {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+      }
+      .company-form textarea {
+        resize: vertical;
+        height: 100px;
+      }
+      .company-form input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .company-form input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="company-form">
+      <h2>Add new company</h2>     
+      <form method="post" action="/create-company">
+        <select name='action' id="action" style="visibility: hidden">
+          <option selected>Create</option>
+        </select>
+        <label for="symbol">Symbol:</label>
+        <input type="text" id="symbol" name="symbol" value="">
+
+        <label for="name">Company name:</label>
+        <input type="text" id="name" name="name" value="">
+
+
+        <label for="sector">Sector:</label>

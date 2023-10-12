@@ -1,0 +1,14 @@
+{
+  "Phone": [
+    "Model",
+    "Year"
+  ],
+  "Car": [
+    "Model",
+    "Year"
+  ],
+  "Computer": [
+    "Model",
+    "Year"
+  ]
+}

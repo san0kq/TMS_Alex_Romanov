@@ -1,0 +1,2 @@
+class RecordExistsError(Exception):
+    pass

@@ -1,0 +1,2 @@
+class IdentifierExistsError(Exception):
+    pass
