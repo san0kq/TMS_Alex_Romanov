@@ -12,6 +12,8 @@ flake8-builtins==2.1.0
 pep8-naming==0.13.3
 flake8-comments==0.1.2
 pre-commit==3.0.4
+prettytable==3.7.0
+requests==2.31.0
 pycryptodome==3.17
 python-decouple==3.8
 mypy==1.1.1
